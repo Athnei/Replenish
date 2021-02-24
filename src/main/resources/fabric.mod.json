@@ -5,7 +5,7 @@
   "name": "Replenish",
   "description": "",
   "authors": [
-    "Me!"
+    "Atthnei"
   ],
   "contact": {
     "homepage": "",
@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.atthnei.replenish.Replenish"
+    ],
+    "modmenu": [
+      "com.atthnei.replenish.config.ModMenuIntegration"
     ]
   },
   "mixins": [

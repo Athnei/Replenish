@@ -1,6 +1,9 @@
 package com.atthnei.replenish;
 
+import com.atthnei.replenish.config.ReplenishConfig;
 import com.mojang.datafixers.util.Pair;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -21,6 +24,8 @@ public class Replenish implements ModInitializer {
 
     public static final String MOD_ID = "replenish";
 
+    public static ReplenishConfig REPLENISH_CONFIG;
+
     private static MinecraftClient mc = MinecraftClient.getInstance();
 
     private KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -34,6 +39,9 @@ public class Replenish implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        AutoConfig.register(ReplenishConfig.class, Toml4jConfigSerializer::new);
+        REPLENISH_CONFIG = AutoConfig.getConfigHolder(ReplenishConfig.class).getConfig();
+
         ClientTickEvents.END_CLIENT_TICK.register(this::onEndTick);
     }
 
