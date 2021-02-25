@@ -12,8 +12,6 @@ group = project.maven_group
 
 repositories {
     maven { url "https://maven.shedaniel.me/" }
-//    maven { url = 'https://dl.bintray.com/shedaniel/cloth-config-2' }
-//    maven { url = 'https://dl.bintray.com/shedaniel/cloth' }
 }
 
 dependencies {
@@ -28,6 +26,7 @@ dependencies {
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+    include("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}")
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.

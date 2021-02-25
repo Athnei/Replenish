@@ -71,11 +71,9 @@ public class Replenish implements ModInitializer {
             ItemStack itemSlot = player.inventory.getStack(i);
 
             if (itemSlot.isFood()) {
-                if (REPLENISH_CONFIG.skipHarmfulEffects) {
-                    if (!IsHarmful(itemSlot)) {
-                        return i;
-                    }
-                } else {
+                boolean isHarmful = IsHarmful(itemSlot);
+
+                if (!isHarmful) {
                     return i;
                 }
             }
@@ -91,11 +89,7 @@ public class Replenish implements ModInitializer {
         if (first.isPresent()) {
             StatusEffect status = first.get().getFirst().getEffectType();
 
-            boolean hasHungerEffect = StatusEffects.HUNGER.getTranslationKey() == status.getTranslationKey();
-
-            if (!REPLENISH_CONFIG.skipHunger && hasHungerEffect) {
-                return false;
-            }
+            boolean ko = StatusEffects.HUNGER.getTranslationKey() == status.getTranslationKey();
 
             return !status.isBeneficial();
         }
