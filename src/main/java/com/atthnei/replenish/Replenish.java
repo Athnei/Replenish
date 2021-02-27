@@ -13,11 +13,11 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -49,7 +49,6 @@ public class Replenish implements ModInitializer {
 
     private void onEndTick(MinecraftClient client) {
         if (keyBinding.isPressed()) {
-
             if (!wasKeySet) {
 
                 slotIndexBeforePress = client.player.inventory.selectedSlot;
@@ -81,13 +80,18 @@ public class Replenish implements ModInitializer {
     }
 
     private boolean DoesItemFitFoodAndConfigConditions(Item item) {
-        if (!REPLENISH_CONFIG.skipPotions) {
+        if (REPLENISH_CONFIG.isIgnoreListAllowed) {
+            String itemId = Registry.ITEM.getId(item).toString();
+
+            if (REPLENISH_CONFIG.ignoreList.contains(itemId)) return true;
+        }
+
+        if (REPLENISH_CONFIG.includePotions) {
             if (IsPotion(item)) return true;
         }
 
         if (item.isFood()) {
-
-            if (REPLENISH_CONFIG.skipHarmfulEffects) {
+            if (REPLENISH_CONFIG.ignoreItemsWithHarmfulEffects) {
                 if (IsHarmful(item)) return false;
             }
 
@@ -101,12 +105,10 @@ public class Replenish implements ModInitializer {
         List<Pair<StatusEffectInstance, Float>> statusEffects = item.getFoodComponent().getStatusEffects();
 
         for (int i = 0; i < statusEffects.size(); i++) {
-            Pair<StatusEffectInstance, Float> f = statusEffects.get(i);
+            Pair<StatusEffectInstance, Float> pair = statusEffects.get(i);
+            StatusEffect status = pair.getFirst().getEffectType();
 
-            StatusEffect status = f.getFirst().getEffectType();
-
-            if (!status.isBeneficial() && status != StatusEffects.HUNGER) return true;
-
+            if (!status.isBeneficial()) return true;
         }
 
         return false;

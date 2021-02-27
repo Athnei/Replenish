@@ -2,6 +2,13 @@
   "replenish.key.categories": "Replenish",
   "replenish.key.replenish-key": "Replenish key",
   "text.autoconfig.replenish.title": "Replenish Config",
-  "text.autoconfig.replenish.option.skipHarmfulEffects": "Skip items with harmful effect",
-  "text.autoconfig.replenish.option.skipPotions": "Skip drinking potions"
+
+  "text.autoconfig.replenish.option.ignoreItemsWithHarmfulEffects.@Tooltip": "e.g., spider eye, puffer fish...",
+  "text.autoconfig.replenish.option.ignoreItemsWithHarmfulEffects": "Ignore food with harmful effect/s",
+  "text.autoconfig.replenish.option.includePotions.@Tooltip": "Drinks potions (does not check for harmful effect/s)",
+  "text.autoconfig.replenish.option.includePotions": "Include potions",
+
+  "text.autoconfig.replenish.option.isIgnoreListAllowed": "Ignore custom items",
+  "text.autoconfig.replenish.option.ignoreList.@Tooltip": "Add food/potion items you want to be ignored for Replenish",
+  "text.autoconfig.replenish.option.ignoreList": "Custom items"
 }
