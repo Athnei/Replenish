@@ -14,11 +14,13 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.Optional;
 
 public class Replenish implements ModInitializer {
 
@@ -61,43 +63,60 @@ public class Replenish implements ModInitializer {
             }
         } else if (wasKeySet) {
             client.options.keyUse.setPressed(false);
-            wasKeySet = false;
             client.player.inventory.selectedSlot = slotIndexBeforePress;
+            wasKeySet = false;
         }
     }
 
     private int GetInventoryFoodIndex(ClientPlayerEntity player) {
         for (int i = 0; i < 9; i++) {
-            ItemStack itemSlot = player.inventory.getStack(i);
+            ItemStack itemStack = player.inventory.getStack(i);
 
-            if (itemSlot.isFood()) {
-                if (REPLENISH_CONFIG.skipHarmfulEffects) {
-                    if (!IsHarmful(itemSlot)) {
-                        return i;
-                    }
-                } else {
-                    return i;
-                }
+            if (DoesItemFitFoodAndConfigConditions(itemStack.getItem())) {
+                return i;
             }
         }
 
         return -1;
     }
 
-    private boolean IsHarmful(ItemStack itemSlot) {
-        List<Pair<StatusEffectInstance, Float>> statusEffects = itemSlot.getItem().getFoodComponent().getStatusEffects();
-        Optional<Pair<StatusEffectInstance, Float>> first = statusEffects.stream().findFirst();
+    private boolean DoesItemFitFoodAndConfigConditions(Item item) {
+        if (!REPLENISH_CONFIG.skipPotions) {
+            if (IsPotion(item)) return true;
+        }
 
-        if (first.isPresent()) {
-            StatusEffect status = first.get().getFirst().getEffectType();
+        if (item.isFood()) {
 
-            boolean hasHungerEffect = StatusEffects.HUNGER.getTranslationKey() == status.getTranslationKey();
-
-            if (!REPLENISH_CONFIG.skipHunger && hasHungerEffect) {
-                return false;
+            if (REPLENISH_CONFIG.skipHarmfulEffects) {
+                if (IsHarmful(item)) return false;
             }
 
-            return !status.isBeneficial();
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean IsHarmful(Item item) {
+        List<Pair<StatusEffectInstance, Float>> statusEffects = item.getFoodComponent().getStatusEffects();
+
+        for (int i = 0; i < statusEffects.size(); i++) {
+            Pair<StatusEffectInstance, Float> f = statusEffects.get(i);
+
+            StatusEffect status = f.getFirst().getEffectType();
+
+            if (!status.isBeneficial() && status != StatusEffects.HUNGER) return true;
+
+        }
+
+        return false;
+    }
+
+    private boolean IsPotion(Item item) {
+        ItemGroup itemGroup = item.getGroup();
+
+        if (itemGroup != null && itemGroup == ItemGroup.BREWING) {
+            return item == Items.POTION;
         }
 
         return false;

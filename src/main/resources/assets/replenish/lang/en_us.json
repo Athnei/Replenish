@@ -2,6 +2,6 @@
   "replenish.key.categories": "Replenish",
   "replenish.key.replenish-key": "Replenish key",
   "text.autoconfig.replenish.title": "Replenish Config",
-  "text.autoconfig.replenish.option.skipHunger": "Skip items with hunger effect",
-  "text.autoconfig.replenish.option.skipHarmfulEffects": "Skip items with harmful effect"
+  "text.autoconfig.replenish.option.skipHarmfulEffects": "Skip items with harmful effect",
+  "text.autoconfig.replenish.option.skipPotions": "Skip drinking potions"
 }
