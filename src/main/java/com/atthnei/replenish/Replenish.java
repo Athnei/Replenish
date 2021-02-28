@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -21,6 +20,7 @@ import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class Replenish implements ModInitializer {
 
@@ -28,14 +28,17 @@ public class Replenish implements ModInitializer {
 
     public static ReplenishConfig REPLENISH_CONFIG;
 
-    private static MinecraftClient mc = MinecraftClient.getInstance();
+    private final MinecraftClient mc = MinecraftClient.getInstance();
 
-    private KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    private final ExtendedKeyBinding replenishKeyBinding = (ExtendedKeyBinding) KeyBindingHelper.registerKeyBinding(new ExtendedKeyBinding(
             MOD_ID + ".key.replenish-key",
             InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R,
             MOD_ID + ".key.categories"));
 
-    private boolean wasKeySet = false;
+    private final ExtendedKeyBinding clearKeyBinding = (ExtendedKeyBinding) KeyBindingHelper.registerKeyBinding(new ExtendedKeyBinding(
+            MOD_ID + ".key.clear-key",
+            InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,
+            MOD_ID + ".key.categories"));
 
     private int slotIndexBeforePress = 0;
 
@@ -48,30 +51,37 @@ public class Replenish implements ModInitializer {
     }
 
     private void onEndTick(MinecraftClient client) {
+        KeyBindingPressed(client, replenishKeyBinding, this::DoesItemFitFoodConditions);
+        KeyBindingPressed(client, clearKeyBinding, this::DoesItemFitClearConditions);
+    }
+
+    private void KeyBindingPressed(MinecraftClient client, ExtendedKeyBinding keyBinding, Function<Item, Boolean> condition) {
+        assert client.player != null;
+
         if (keyBinding.isPressed()) {
-            if (!wasKeySet) {
+            if (!keyBinding.WasUseKeySetPressed) {
 
                 slotIndexBeforePress = client.player.inventory.selectedSlot;
-                int foodIndex = GetInventoryFoodIndex(client.player);
+                int hotbarIndex = GetHotbarIndex(client.player, condition);
 
-                if (foodIndex != -1) {
-                    client.player.inventory.selectedSlot = foodIndex;
+                if (hotbarIndex != -1) {
+                    client.player.inventory.selectedSlot = hotbarIndex;
                     client.options.keyUse.setPressed(true);
-                    wasKeySet = true;
+                    keyBinding.WasUseKeySetPressed = true;
                 }
             }
-        } else if (wasKeySet) {
+        } else if (keyBinding.WasUseKeySetPressed) {
             client.options.keyUse.setPressed(false);
             client.player.inventory.selectedSlot = slotIndexBeforePress;
-            wasKeySet = false;
+            keyBinding.WasUseKeySetPressed = false;
         }
     }
 
-    private int GetInventoryFoodIndex(ClientPlayerEntity player) {
+    private int GetHotbarIndex(ClientPlayerEntity player, Function<Item, Boolean> condition) {
         for (int i = 0; i < 9; i++) {
             ItemStack itemStack = player.inventory.getStack(i);
 
-            if (DoesItemFitFoodAndConfigConditions(itemStack.getItem())) {
+            if (condition.apply(itemStack.getItem())) {
                 return i;
             }
         }
@@ -79,7 +89,7 @@ public class Replenish implements ModInitializer {
         return -1;
     }
 
-    private boolean DoesItemFitFoodAndConfigConditions(Item item) {
+    private boolean DoesItemFitFoodConditions(Item item) {
         if (REPLENISH_CONFIG.isIgnoreListAllowed) {
             String itemId = Registry.ITEM.getId(item).toString();
 
@@ -92,7 +102,7 @@ public class Replenish implements ModInitializer {
 
         if (item.isFood()) {
             if (REPLENISH_CONFIG.ignoreItemsWithHarmfulEffects) {
-                if (IsHarmful(item)) return false;
+                return !IsHarmful(item);
             }
 
             return true;
@@ -101,11 +111,16 @@ public class Replenish implements ModInitializer {
         return false;
     }
 
+    private boolean DoesItemFitClearConditions(Item item) {
+        String itemId = Registry.ITEM.getId(item).toString();
+
+        return REPLENISH_CONFIG.clearList.contains(itemId);
+    }
+
     private boolean IsHarmful(Item item) {
         List<Pair<StatusEffectInstance, Float>> statusEffects = item.getFoodComponent().getStatusEffects();
 
-        for (int i = 0; i < statusEffects.size(); i++) {
-            Pair<StatusEffectInstance, Float> pair = statusEffects.get(i);
+        for (Pair<StatusEffectInstance, Float> pair : statusEffects) {
             StatusEffect status = pair.getFirst().getEffectType();
 
             if (!status.isBeneficial()) return true;
