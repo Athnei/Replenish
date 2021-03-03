@@ -22,4 +22,4 @@ So I've written my implementation with some additional QOL features.
 Item ids can be found at [DigMinecraft](https://www.digminecraft.com/lists/item_id_list_pc.php) or in game when tooltips are shown (F3 + H) ![ItemID](.assets/item_id.PNG)
 
 ## Troubleshooting
-- If item that is not used or ignored in custom lists recheck item ID added.
+- If item that is not used or ignored from custom lists recheck item ID added.
