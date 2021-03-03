@@ -8,8 +8,9 @@
     "Atthnei"
   ],
   "contact": {
-    "homepage": "",
-    "sources": ""
+    "homepage": "https://github.com/Athnei/Replenish",
+    "sources": "https://github.com/Athnei/Replenish/releases/",
+    "issues": "https://github.com/Athnei/Replenish/issues"
   },
   "license": "MIT",
   "icon": "assets/replenish/icon.png",

@@ -90,7 +90,8 @@ public class Replenish implements ModInitializer {
     }
 
     private boolean DoesItemFitFoodConditions(Item item) {
-        if (REPLENISH_CONFIG.isIgnoreListAllowed) {
+        if (!REPLENISH_CONFIG.ignoreList.isEmpty()) {
+//        if (REPLENISH_CONFIG.isIgnoreListAllowed) {
             String itemId = Registry.ITEM.getId(item).toString();
 
             if (REPLENISH_CONFIG.ignoreList.contains(itemId)) return true;

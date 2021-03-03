@@ -12,9 +12,9 @@
   "text.autoconfig.replenish.option.includePotions": "Include potions",
 
   "text.autoconfig.replenish.category.ignore_effects_category": "Ignore effect/s settings",
-  "text.autoconfig.replenish.option.isIgnoreListAllowed": "Ignore food/potion effect/s",
+  "text.autoconfig.replenish.option.isIgnoreListAllowed": "Ignore food/potion harmful effect/s",
   "text.autoconfig.replenish.option.ignoreList.@Tooltip": "Add food/potion you want its effect/s to be ignored\nwhen you press replenish key",
-  "text.autoconfig.replenish.option.ignoreList": "Custom items",
+  "text.autoconfig.replenish.option.ignoreList": "Ignore food/potion harmful effect/s",
 
   "text.autoconfig.replenish.category.clear_effects_category": "Clear effect/s settings",
   "text.autoconfig.replenish.option.clearList.@Tooltip": "Add item/s you want to be used\nwhen your press clear key",
