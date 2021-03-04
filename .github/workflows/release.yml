@@ -48,7 +48,7 @@ jobs:
       - name: View content
         run: ls -R
 
-      - name: Create GitHub release
+      - name: Create release
         id: create-release
         uses: actions/create-release@v1
         env:
@@ -57,7 +57,7 @@ jobs:
           tag_name: ${{ github.run_number }}
           release_name: Release ${{ github.run_number }}
 
-      - name: Upload release asset
+      - name: Upload release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
