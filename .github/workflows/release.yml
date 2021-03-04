@@ -50,6 +50,13 @@ jobs:
       - name: View content
         run: ls -R
 
+      - name: Get jar name
+        run: jar_name=`echo *.jar`
+
+      - name: Set jar name
+        run: echo "::set-output name=JAR_NAME::${jar_name}"
+        id: jar-name
+
       - name: Create release
         id: create-release
         uses: actions/create-release@v1
@@ -66,5 +73,5 @@ jobs:
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./*.jar
-          asset_name: "*.jar"
+          asset_name: ${{ steps.jar-name.outputs.JAR_NAME }}
           asset_content_type: application/java-archive
