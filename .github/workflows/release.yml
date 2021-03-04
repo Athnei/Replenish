@@ -40,27 +40,30 @@ jobs:
     needs: build
 
     steps:
-      - name: Download site content
+      - name: Download artifact
+        id: download
         uses: actions/download-artifact@v2
         with:
           name: Artifacts
 
+      - name: "Echo"
+        run: echo ${{ steps.download.outputs }}
+        # run: echo ${{ steps.download.outputs.download-path }}
+
       - name: View content
         run: ls -R
-
-      - name: Create release
-        id: create-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-
-      - name: Upload release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./*.jar
+      # - name: Create release
+      #   id: create-release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.run_number }}
+      #     release_name: Release ${{ github.run_number }}
+      # - name: Upload release
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create-release.outputs.upload_url }}
+      #     asset_path: ${{ steps.download-artifact}}
