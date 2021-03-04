@@ -47,7 +47,10 @@ jobs:
           name: Artifacts
 
       - name: "Echo"
-        run: echo ${{ steps.download.outputs.download-path }}
+        run: echo ${{ steps.download.outputs.download }}
+
+      - name: "Echo2"
+        run: echo ${{ steps.download.outputs.download-name }}
 
       - name: View content
         run: ls -R
