@@ -26,6 +26,7 @@ jobs:
         run: ./gradlew build --stacktrace --parallel
 
       - name: Capture build artifacts
+        id: upload
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
@@ -47,7 +48,7 @@ jobs:
           name: Artifacts
 
       - name: "Echo"
-        run: echo ${{ steps.download.outputs.name }}
+        run: echo ${{ steps.upload.inputs.name }}
 
       - name: View content
         run: ls -R
