@@ -47,8 +47,7 @@ jobs:
           name: Artifacts
 
       - name: "Echo"
-        run: echo ${{ steps.download.outputs }}
-        # run: echo ${{ steps.download.outputs.download-path }}
+        run: echo ${{ steps.download.outputs.download-path }}
 
       - name: View content
         run: ls -R
@@ -59,7 +58,7 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #   with:
       #     tag_name: ${{ github.run_number }}
-      #     release_name: Release ${{ github.run_number }}
+      #     release_name: Release
       # - name: Upload release
       #   uses: actions/upload-release-asset@v1
       #   env:
