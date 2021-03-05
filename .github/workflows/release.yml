@@ -26,6 +26,7 @@ jobs:
         run: ./gradlew build --stacktrace --parallel
 
       - name: Capture build artifacts
+        id: upload
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
@@ -40,7 +41,8 @@ jobs:
     needs: build
 
     steps:
-      - name: Download site content
+      - name: Download artifact
+        id: download
         uses: actions/download-artifact@v2
         with:
           name: Artifacts
@@ -48,19 +50,27 @@ jobs:
       - name: View content
         run: ls -R
 
-      - name: Create GitHub release
+      - name: Get filename as env variable
+        run: file=$(echo *.jar); echo "file_name=${file}" >> $GITHUB_ENV
+
+      - name: Get version as env variable
+        run: file=$(echo *.jar);ver=${file%.*};ver=${ver##replenish-}; echo "version=${ver}" >> $GITHUB_ENV
+
+      - name: Create release
         id: create-release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          tag_name: v${{ env.version }}
+          release_name: Release ${{ env.version }}
 
-      - name: Upload release asset
+      - name: Upload release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./*.jar
+          asset_path: ./${{ env.file_name }}
+          asset_name: ${{ env.file_name }}
+          asset_content_type: application/java-archive
