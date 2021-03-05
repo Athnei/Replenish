@@ -50,27 +50,27 @@ jobs:
       - name: View content
         run: ls -R
 
-      - name: Set file as var
+      - name: Get filename as env variable
         run: file=$(echo *.jar); echo "file_name=${file}" >> $GITHUB_ENV
 
-      - name: Use the value
-        run: echo "${{ env.file_name }}" # This will output 'yellow'  
+      - name: Get version as env variable
+        run: ver=${file%.*};ver=${ver##replenish-}; echo "version=${ver}" >> $GITHUB_ENV
 
-      # - name: Create release
-      #   id: create-release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.run_number }}
-      #     release_name: Release
+      - name: Create release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.version }}
+          release_name: Release ${{ env.version }}
 
-      # - name: Upload release
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create-release.outputs.upload_url }}
-      #     asset_path: ./
-      #     asset_name: replenish.jar
-      #     asset_content_type: application/java-archive
+      - name: Upload release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./${{ env.file_name }}
+          asset_name: ${{ env.file_name }}
+          asset_content_type: application/java-archive
