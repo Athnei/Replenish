@@ -60,26 +60,25 @@ public class Replenish implements ModInitializer {
 
         if (keyBinding.isPressed()) {
             if (!keyBinding.WasUseKeySetPressed) {
-
-                slotIndexBeforePress = client.player.inventory.selectedSlot;
+                slotIndexBeforePress = client.player.getInventory().selectedSlot;
                 int hotbarIndex = GetHotbarIndex(client.player, condition);
 
                 if (hotbarIndex != -1) {
-                    client.player.inventory.selectedSlot = hotbarIndex;
+                    client.player.getInventory().selectedSlot = hotbarIndex;
                     client.options.keyUse.setPressed(true);
                     keyBinding.WasUseKeySetPressed = true;
                 }
             }
         } else if (keyBinding.WasUseKeySetPressed) {
             client.options.keyUse.setPressed(false);
-            client.player.inventory.selectedSlot = slotIndexBeforePress;
+            client.player.getInventory().selectedSlot = slotIndexBeforePress;
             keyBinding.WasUseKeySetPressed = false;
         }
     }
 
     private int GetHotbarIndex(ClientPlayerEntity player, Function<Item, Boolean> condition) {
         for (int i = 0; i < 9; i++) {
-            ItemStack itemStack = player.inventory.getStack(i);
+            ItemStack itemStack = player.getInventory().getStack(i);
 
             if (condition.apply(itemStack.getItem())) {
                 return i;
@@ -91,7 +90,6 @@ public class Replenish implements ModInitializer {
 
     private boolean DoesItemFitFoodConditions(Item item) {
         if (!REPLENISH_CONFIG.ignoreList.isEmpty()) {
-//        if (REPLENISH_CONFIG.isIgnoreListAllowed) {
             String itemId = Registry.ITEM.getId(item).toString();
 
             if (REPLENISH_CONFIG.ignoreList.contains(itemId)) return true;
