@@ -18,9 +18,6 @@ public class ReplenishConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean includePotions = false;
 
-//    @ConfigEntry.Category("ignore_effects_category")
-//    public boolean isIgnoreListAllowed = true;
-
     @ConfigEntry.Category("ignore_effects_category")
     @ConfigEntry.Gui.Tooltip
     public List<String> ignoreList = new ArrayList<>(

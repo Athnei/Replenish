@@ -1,6 +1,6 @@
 package com.atthnei.replenish;
 
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public class ExtendedKeyBinding extends KeyBinding {

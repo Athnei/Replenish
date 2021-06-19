@@ -54,7 +54,7 @@ jobs:
         run: file=$(echo *.jar); echo "file_name=${file}" >> $GITHUB_ENV
 
       - name: Get version as env variable
-        run: ver=${file%.*};ver=${ver##replenish-}; echo "version=${ver}" >> $GITHUB_ENV
+        run: file=$(echo *.jar);ver=${file%.*};ver=${ver##replenish-}; echo "version=${ver}" >> $GITHUB_ENV
 
       - name: Create release
         id: create-release
