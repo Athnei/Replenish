@@ -1,7 +1,7 @@
 package com.atthnei.replenish;
 
-import com.atthnei.replenish.config.ReplenishConfig;
 import com.mojang.datafixers.util.Pair;
+import com.atthnei.replenish.config.ReplenishConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -20,6 +20,7 @@ import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class Replenish implements ModInitializer {
@@ -117,7 +118,7 @@ public class Replenish implements ModInitializer {
     }
 
     private boolean IsHarmful(Item item) {
-        List<Pair<StatusEffectInstance, Float>> statusEffects = item.getFoodComponent().getStatusEffects();
+        List<Pair<StatusEffectInstance, Float>> statusEffects = Objects.requireNonNull(item.getFoodComponent()).getStatusEffects();
 
         for (Pair<StatusEffectInstance, Float> pair : statusEffects) {
             StatusEffect status = pair.getFirst().getEffectType();
